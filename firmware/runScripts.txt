@@ -1,2 +1,3 @@
-#Live Update 
-nohup python3 l_1_poLoLiveUpdate.py >& logs/livePoLoLiveUpdate2023.log &
+
+nohup ./runDataReaders.sh  >/dev/null 2>&1  &
+

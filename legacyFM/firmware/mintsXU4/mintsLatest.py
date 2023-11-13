@@ -3,26 +3,24 @@ import serial
 import datetime
 import os
 import csv
-#import deepdish as dd
+import deepdish as dd
 import time
 import paho.mqtt.client as mqttClient
 import yaml
 from mintsXU4 import mintsDefinitions as mD
 from mintsXU4 import mintsSensorReader as mSR
-from mintsXU4 import mintsProcessing as mP
 import ssl
 
 macAddress              = mD.macAddress
 mqttPort                = mD.mqttPort
-mqttBroker              = mD.mqttBrokerDC
+mqttBroker              = mD.mqttBroker
 dataFolderMQTT          = mD.dataFolderMQTT
-
+mqttCredentialsFile     = mD.mqttCredentialsFile
 dataFolderMQTTReference = mD.dataFolderMQTTReference
 tlsCert                 = mD.tlsCert
 
-credentials             = mD.credentials
 # FOR MQTT 
-
+credentials = yaml.load(open(mqttCredentialsFile))
 connected   = False  # Stores the connection status
 broker      = mqttBroker
 port        = mqttPort # Secure port
@@ -42,7 +40,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_publish(client, userdata, result):
-    print("MQTT Published!")
+    return;
 
 
 def connect(mqtt_client, mqtt_username, mqtt_password, broker_endpoint, port):
@@ -75,6 +73,19 @@ def connect(mqtt_client, mqtt_username, mqtt_password, broker_endpoint, port):
     return True
 
 
+def writeMQTTLatestRepublish(sensorDictionary,sensorName,nodeID):
+
+    if connect(mqtt_client, mqttUN, mqttPW, broker, port):
+        try:
+            # print("Here")
+            mqtt_client.publish(nodeID+"/"+sensorName,json.dumps(sensorDictionary))
+
+        except Exception as e:
+            print("[ERROR] Could not publish data, error: {}".format(e))
+    
+    return True
+
+
 def writeMQTTLatest(sensorDictionary,sensorName):
 
     if connect(mqtt_client, mqttUN, mqttPW, broker, port):
@@ -99,7 +110,7 @@ def writeMQTTLatestMock(sensorDictionary,sensorName):
 
 def writeJSONLatest(sensorDictionary,sensorName):
     directoryIn  = dataFolder+"/"+macAddress+"/"+sensorName+".json"
-    print(directoryIn)
+    # print(directoryIn)
     try:
         with open(directoryIn,'w') as fp:
             mSR.directoryCheck(directoryIn)
@@ -160,7 +171,7 @@ def readJSONLatestAll(sensorName):
         
 
 def readJSONLatestAllMQTT(nodeID,sensorID):
-    directoryIn  = dataFolderMQTTReference+"/"+nodeID+"/"+sensorID+".json"
+    directoryIn  = dataFolderMQTT+"/"+nodeID+"/"+sensorID+".json"
     try:
         with open(directoryIn, 'r') as myfile:
             # dataRead=myfile.read()
@@ -168,8 +179,8 @@ def readJSONLatestAllMQTT(nodeID,sensorID):
 
         time.sleep(0.01)
         return dataRead, True;
-    except:
-        print("Data Conflict!")
-        return "NaN", False
+    except Exception as e:
+        print("[ERROR] Could not publish data, error: {}".format(e))
+    
 
 

@@ -2,30 +2,39 @@
 from getmac import get_mac_address
 import serial.tools.list_ports
 import yaml
+import pandas as pd
+# Change Accordingly  
+mintsDefinitions          = yaml.load(open('mintsXU4/credentials/mintsDefinitions.yaml'),Loader=yaml.FullLoader)
+dataFolder                = mintsDefinitions['dataFolder']
+dataFolderReference       = mintsDefinitions['dataFolder'] + "/reference"
+dataFolderMQTTReference   = mintsDefinitions['dataFolder'] + "/referenceMqtt"  # The path of your MQTT Reference Data 
+dataFolderMQTT            = mintsDefinitions['dataFolder'] + "/rawMqtt"        # The path of your MQTT Raw Data 
+tlsCert                   = mintsDefinitions['tlsCert']     # The path of your TLS cert
 
-tlsCert                   = "/etc/ssl/certs/ca-certificates.crt"     # The path of your TLS cert
+liveSpanSec               = mintsDefinitions['liveSpanSec']
 
 latestOn                  = False
 
-# For MQTT 
-mqttOn                   = True
-mqttCredentialsFile      = 'mintsXU4/credentials.yml'
-mqttLoRaCredentialsFile  = 'mintsXU4/loRaCredentials.yml'
-portIDsFile              = 'mintsXU4/portIDs.yml'
+mqttOn                    = True
+credentialsFile           = 'mintsXU4/credentials/credentials.yaml'
+credentials               = yaml.load(open(credentialsFile))
+
+sensorInfo                = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/sensorIDs.csv')
+portInfo                  = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/portIDs.csv')
+nodeInfo                  = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/sharedAirDFWSupport.csv')
+
+mqttBrokerDC              = "mqtt.circ.utdallas.edu"
+mqttBrokerLoRa            = "mqtt.lora.trecis.cloud"
+
+mqttPort                  = 8883  # Secure port
+mqttPortLoRa              = 1883  # Secure port
+
+timeSpan                  = mintsDefinitions['timeSpan']
+
+liveFolder                = dataFolder    + "/testResV3"
 
 
-mqttBroker               = "mqtt.circ.utdallas.edu"
-mintsDefinitionsFile     = 'mintsXU4/mintsDefinitions.yaml'
 
-mqttPort                 = 8883  # Secure port
-
-mintsDefinitions         = yaml.load(open(mintsDefinitionsFile))
-portIDs                  = yaml.load(open(portIDsFile))
-
-mqttBrokerLoRa           = "mqtt.lora.trecis.cloud"
-mqttPortLoRa             = 1883  # Secure port
-
-tlsCert                  = mintsDefinitions['tlsCert']
 
 def findMacAddress():
     macAddress= get_mac_address(interface="eth0")
@@ -43,36 +52,15 @@ def findMacAddress():
     return "xxxxxxxx"
 
 macAddress                = findMacAddress()
-dataFolder                = mintsDefinitions['dataFolder']
-rawFolder                 = dataFolder    + "/raw"
-referenceFolder           = dataFolder    + "/reference"
-rawPklsFolder             = dataFolder    + "/rawPklsV3"
-referencePklsFolder       = dataFolder    + "/referencePklsV3"
-mergedPklsFolder          = dataFolder    + "/mergedPklsV3"
-modelsPklsFolder          = dataFolder    + "/modelsPklsV3"
-# liveFolder                = dataFolder    + "/liveUpdate/results"
-liveFolder                = dataFolder    + "/testResV3"
-
-
-# Change Accordingly  
-dataFolderMQTTReference   = dataFolder + "/referenceMQTT"  # The path of your MQTT Reference Data 
-dataFolderMQTT            = dataFolder + "/rawMQTT"        # The path of your MQTT Raw Data 
-dataFolderReference       = dataFolder + "/reference"
-dataFolderMQTTCalib       = dataFolder + "/calibratedMQTT"
-timeSpan                  = mintsDefinitions['timeSpan']
 
 print()
-print("----MINTS Definitions-----")
-print("Data Folder                : {0}".format(dataFolder))
-print("Raw Folder                 : {0}".format(rawFolder))
-print("Reference Folder           : {0}".format(referenceFolder))
-print("Time Span                  : {0}".format(timeSpan))
-print("Data Folder Ref            : {0}".format(dataFolder))
-print("Mac Address                : {0}".format(macAddress))
-print("Latest On                  : {0}".format(latestOn))
-print("MQTT On                    : {0}".format(mqttOn))
-print("MQTT Credentials File      : {0}".format(mqttCredentialsFile))
-print("MQTT Broker and Port       : {0}, {1}".format(mqttOn,mqttPort))
-# print("Sensor Nodes File          : {0}".format(sensorNodesFile))
-
-
+print("----- MQTT Subscriber V2 -----")
+print(" ")
+print("Node Info:")
+print(nodeInfo)
+print(" ")
+print("Sensor Info:")
+print(sensorInfo)
+print(" ")
+print("Port Info:")
+print(portInfo)
