@@ -61,8 +61,8 @@ def sensorSendLoRa(dateTime,nodeID,sensorID,framePort,base16Data):
     #     PMPoLoLoRaWrite(dateTime,nodeID,sensorID,framePort,base16Data)        
     if(sensorID=="GPGGALR"):
         return GPGGALRLoRaWrite(dateTime,nodeID,sensorID,framePort,base16Data) 
-    # if(sensorID=="PA1010D"):
-    #     return PA1010DLoRaWrite(dateTime,nodeID,sensorID,framePort,base16Data) 
+    if(sensorID=="PA1010D"):
+        return PA1010DLoRaWrite(dateTime,nodeID,sensorID,framePort,base16Data) 
     # if(sensorID=="GPGGA"):
     #     return GPGGALoRaWrite(dateTime,nodeID,sensorID,framePort,base16Data) 
     # if(sensorID=="GPRMC"):
