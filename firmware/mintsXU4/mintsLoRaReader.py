@@ -607,9 +607,9 @@ def BME280LoRaWrite(dateTime,nodeID,sensorID,framePort,base16Data):
     if(framePort == 21 and len(base16Data) ==24):
         sensorDictionary =  OrderedDict([
                 ("dateTime"    ,str(dateTime)), 
-        		("Temperature" ,struct.unpack('<f',bytes.fromhex(base16Data[0:8]))[0]),
-            	("Pressure"    ,struct.unpack('<f',bytes.fromhex(base16Data[8:16]))[0]),
-                ("Humidity"    ,struct.unpack('<f',bytes.fromhex(base16Data[16:24]))[0]),
+        		("temperature" ,struct.unpack('<f',bytes.fromhex(base16Data[0:8]))[0]),
+            	("pressure"    ,struct.unpack('<f',bytes.fromhex(base16Data[8:16]))[0]),
+                ("humidity"    ,struct.unpack('<f',bytes.fromhex(base16Data[16:24]))[0]),
           ])
         # print(sensorDictionary)        
         return sensorDictionary;
@@ -619,9 +619,9 @@ def SCD30LoRaWrite(dateTime,nodeID,sensorID,framePort,base16Data):
     if(framePort == 33 and len(base16Data) ==24):
         sensorDictionary =  OrderedDict([
                 ("dateTime"    ,str(dateTime)), 
-        		("CO2"         ,struct.unpack('<f',bytes.fromhex(base16Data[0:8]))[0]),
-            	("Temperature" ,struct.unpack('<f',bytes.fromhex(base16Data[8:16]))[0]),
-                ("Humidity"    ,struct.unpack('<f',bytes.fromhex(base16Data[16:24]))[0]),
+        		("cO2"         ,struct.unpack('<f',bytes.fromhex(base16Data[0:8]))[0]),
+            	("temperature" ,struct.unpack('<f',bytes.fromhex(base16Data[8:16]))[0]),
+                ("humidity"    ,struct.unpack('<f',bytes.fromhex(base16Data[16:24]))[0]),
           ])
         # print(sensorDictionary)        
         return sensorDictionary;
