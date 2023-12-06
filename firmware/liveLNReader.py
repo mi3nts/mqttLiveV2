@@ -130,6 +130,7 @@ def on_message(client, userdata, msg):
                 # print("Date Time :"  +str(dateTime))            
                 # print("Data      :" + str(sensorDictionary))
                 nodeObjects[nodeIndex].update(sensorID,sensorDictionary)
+                
             else:
                 print("Node ID not registered: {}".format(nodeID)) 
 
