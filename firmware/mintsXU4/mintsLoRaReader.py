@@ -714,47 +714,54 @@ def loRaWriteFinisher(nodeID,sensorID,dateTime,sensorDictionary):
     return;
 
 def loRaSummaryWrite(message,portInfo):
+    try: 
+        nodeID = message.topic.split('/')[5]
+        sensorPackage       =  decoder.decode(message.payload.decode("utf-8","ignore"))
+        rxInfo              =  sensorPackage['rxInfo'][0]
+        txInfo              =  sensorPackage['txInfo']
+        loRaModulationInfo  =  txInfo['loRaModulationInfo']
+        framePort           =  sensorPackage['fPort']
+        # print(framePort)
+        # print(portInfo)
+        
+        sensorID            =  getSensorFromPort(framePort,portInfo)
+        dateTime            =  datetime.datetime.fromisoformat(sensorPackage['publishedAt'][0:26])
+        base16Data          =  base64.b64decode(sensorPackage['data'].encode()).hex()
+        gatewayID           =  base64.b64decode(rxInfo['gatewayID']).hex()
 
-    nodeID = message.topic.split('/')[5]
-    sensorPackage       =  decoder.decode(message.payload.decode("utf-8","ignore"))
-    rxInfo              =  sensorPackage['rxInfo'][0]
-    txInfo              =  sensorPackage['txInfo']
-    loRaModulationInfo  =  txInfo['loRaModulationInfo']
-    framePort           =  sensorPackage['fPort']
-    # print(framePort)
-    # print(portInfo)
+
+        sensorDictionary =  OrderedDict([
+                ("dateTime"        , str(dateTime)),
+                ("nodeID"          , nodeID),
+                ("sensorID"        , sensorID),
+                ("gatewayID"       , gatewayID),
+                ("rssi"            , rxInfo["rssi"]),
+                ("loRaSNR"         , rxInfo["loRaSNR"]),
+                ("channel"         , rxInfo["channel"] ),
+                ("rfChain"         , rxInfo["rfChain"] ),
+                ("frequency"       , txInfo["frequency"]),
+                ("bandwidth"       , loRaModulationInfo["bandwidth"]),
+                ("spreadingFactor" , loRaModulationInfo["spreadingFactor"] ),
+                ("codeRate"        , loRaModulationInfo["codeRate"] ),
+                ("dataRate"        , sensorPackage['dr']),
+                ("frameCounters"   , sensorPackage['fCnt']),
+                ("framePort"       , framePort),
+                ("base64Data"      , sensorPackage['data']),
+                ("base16Data"      , base16Data),
+                ("devAddr"         , sensorPackage['devAddr']),
+                ("deviceAddDecoded", base64.b64decode(sensorPackage['devAddr'].encode()).hex())
+            ])
+        print(sensorDictionary)
+        # loRaWriteFinisher("LoRaNodes","Summary",dateTime,sensorDictionary)
+        # loRaWriteFinisher(gatewayID,"Summary",dateTime,sensorDictionary)
+        return dateTime,gatewayID,nodeID,sensorID,framePort,base16Data;
     
-    sensorID            =  getSensorFromPort(framePort,portInfo)
-    dateTime            =  datetime.datetime.fromisoformat(sensorPackage['publishedAt'][0:26])
-    base16Data          =  base64.b64decode(sensorPackage['data'].encode()).hex()
-    gatewayID           =  base64.b64decode(rxInfo['gatewayID']).hex()
+    except Exception as e:
+        print("[ERROR] Could not publish data, error: {}".format(e))
+        
+        return None,None,None,None,None,None;
 
 
-    sensorDictionary =  OrderedDict([
-            ("dateTime"        , str(dateTime)),
-            ("nodeID"          , nodeID),
-            ("sensorID"        , sensorID),
-            ("gatewayID"       , gatewayID),
-            ("rssi"            , rxInfo["rssi"]),
-            ("loRaSNR"         , rxInfo["loRaSNR"]),
-            ("channel"         , rxInfo["channel"] ),
-            ("rfChain"         , rxInfo["rfChain"] ),
-            ("frequency"       , txInfo["frequency"]),
-            ("bandwidth"       , loRaModulationInfo["bandwidth"]),
-            ("spreadingFactor" , loRaModulationInfo["spreadingFactor"] ),
-            ("codeRate"        , loRaModulationInfo["codeRate"] ),
-            ("dataRate"        , sensorPackage['dr']),
-            ("frameCounters"   , sensorPackage['fCnt']),
-            ("framePort"       , framePort),
-            ("base64Data"      , sensorPackage['data']),
-            ("base16Data"      , base16Data),
-            ("devAddr"         , sensorPackage['devAddr']),
-            ("deviceAddDecoded", base64.b64decode(sensorPackage['devAddr'].encode()).hex())
-        ])
-    # print(sensorDictionary)
-    # loRaWriteFinisher("LoRaNodes","Summary",dateTime,sensorDictionary)
-    # loRaWriteFinisher(gatewayID,"Summary",dateTime,sensorDictionary)
-    return dateTime,gatewayID,nodeID,sensorID,framePort,base16Data;
 
 def getPortIndex(portIDIn,portIDs):
     indexOut = 0

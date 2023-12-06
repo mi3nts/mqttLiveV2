@@ -98,39 +98,44 @@ def on_message(client, userdata, msg):
         # print("Node ID         : " + nodeID)
         # print("Sensor ID       : " + sensorID)
         # print(currentState)
-        currentTimeInSec  = dateTime.timestamp()
-        liveState         = mP.getStateV2(currentTimeInSec)
-        nodeIndex         = getNodeIndex(nodeID)
+        if nodeID is not None:
+            currentTimeInSec  = dateTime.timestamp()
+            liveState         = mP.getStateV2(currentTimeInSec)
+            nodeIndex         = getNodeIndex(nodeID)
 
-        sensorDictionary  = mLR.sensorSendLoRa(dateTime,nodeID,sensorID,framePort,base16Data)
+            sensorDictionary  = mLR.sensorSendLoRa(dateTime,nodeID,sensorID,framePort,base16Data)
+           
+            if nodeIndex>=0 : 
+                print() 
+                print("==================================================================")
+                print(" - - - ---------------- MINTS DATA RECEIVED ----------------- - - ")             
+                print(" ------------------- Data for Live Node found ------------------- ")
+                print("Node ID         : " + nodeID)
+                print("Sensor ID       : " + sensorID)
+                print("Node Index      : " + str(nodeIndex))
+                print("Sensor Data     : " +  str(sensorDictionary))
+                # print(sensorDictionary)
+                if currentState != liveState:
+                    currentState = liveState
+                    print(" - - - ==== - - - ==== Status Changed ==== - - - ==== - - - ")
+                    for nodeObject in nodeObjects:
+                        # print("Changing Status")
+                        nodeObject.changeStateV2()
+    
+                # print()
+                # print(" - - - MINTS DATA RECEIVED - - - ")
+                # print("Node ID   :" + nodeID)
+                # print("Sensor ID :" + sensorID)
+                # print("Node Index:" + str(nodeIndex))
+                # print("Date Time :"  +str(dateTime))            
+                # print("Data      :" + str(sensorDictionary))
+                nodeObjects[nodeIndex].update(sensorID,sensorDictionary)
+            else:
+                print("Node ID not registered: {}".format(nodeID)) 
 
-        
-        if nodeIndex>=0 : 
-            print() 
-            print("==================================================================")
-            print(" - - - ---------------- MINTS DATA RECEIVED ----------------- - - ")             
-            print(" ------------------- Data for Live Node found ------------------- ")
-            print("Node ID         : " + nodeID)
-            print("Sensor ID       : " + sensorID)
-            print("Node Index      : " + str(nodeIndex))
-            print("Sensor Data     : " +  str(sensorDictionary))
-            # print(sensorDictionary)
-            if currentState != liveState:
-                currentState = liveState
-                print(" - - - ==== - - - ==== Status Changed ==== - - - ==== - - - ")
-                for nodeObject in nodeObjects:
-                    # print("Changing Status")
-                    nodeObject.changeStateV2()
-   
-            # print()
-            # print(" - - - MINTS DATA RECEIVED - - - ")
-            # print("Node ID   :" + nodeID)
-            # print("Sensor ID :" + sensorID)
-            # print("Node Index:" + str(nodeIndex))
-            # print("Date Time :"  +str(dateTime))            
-            # print("Data      :" + str(sensorDictionary))
-            nodeObjects[nodeIndex].update(sensorID,sensorDictionary)
-
+        else:
+            print("Invalid data received")
+            
 
         # if nodeID in nodeIDs:
         #     print("Date Time       : " + str(dateTime))
