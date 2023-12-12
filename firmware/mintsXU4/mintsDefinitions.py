@@ -21,7 +21,10 @@ credentials               = yaml.load(open(credentialsFile))
 
 sensorInfo                = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/sensorIDs.csv')
 portInfo                  = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/portIDs.csv')
-nodeInfo                  = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/sharedAirDFWSupport.csv')
+
+# nodeInfo                  = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/sharedAirDFWSupport.csv')
+nodeInfo                  = pd.read_csv('https://raw.githubusercontent.com/mi3nts/AirQualityAnalysisWorkflows/main/influxdb/nodered-docker/sharedAirDFWSupportTest1.csv') # For Testing Purposes
+
 
 mqttBrokerDC              = "mqtt.circ.utdallas.edu"
 mqttBrokerLoRa            = "mqtt.lora.trecis.cloud"
