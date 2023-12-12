@@ -31,7 +31,7 @@ mqttPortLoRa              = 1883  # Secure port
 
 timeSpan                  = mintsDefinitions['timeSpan']
 
-liveFolder                = dataFolder    + "/testResV3"
+liveFolder                = dataFolder    + "/liveUpdate/results"
 
 
 
