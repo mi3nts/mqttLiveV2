@@ -331,8 +331,7 @@ class node:
     #     return  numberIn % 2 == 0;
 
     def getTimeV2(self):
-        # print("Get time V2")
-        checkTime = datetime.utcfromtimestamp(mP.getStateV2(self.dateTimePM[-1].timestamp())*liveSpanSec)
+        checkTime = datetime.fromtimestamp(mP.getStateV2(self.dateTimePM[-1].timestamp())*liveSpanSec)
         self.dateTimeStrCSV = str(checkTime.year).zfill(4)+ \
                 "-" + str(checkTime.month).zfill(2) + \
                 "-" + str(checkTime.day).zfill(2) + \

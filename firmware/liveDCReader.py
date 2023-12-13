@@ -104,10 +104,9 @@ def on_message(client, userdata, msg):
         nodeIndex = getNodeIndex(nodeID)
         dateTime = datetime.datetime.strptime(sensorDictionary["dateTime"], '%Y-%m-%d %H:%M:%S.%f')
         
-        # print(dateTimeNow)
         currentTimeInSec = dateTime.timestamp()
         liveState        = mP.getStateV2(currentTimeInSec)
-     
+
         # Bird call data comes with a lag  
         if nodeIndex>=0 :   
             print() 
@@ -117,7 +116,9 @@ def on_message(client, userdata, msg):
             print("Node ID         : " + nodeID)
             print("Sensor ID       : " + sensorID)
             print("Node Index      : " + str(nodeIndex))
-            print("Sensor Data     : " +  str(sensorDictionary))
+            print("Live State DC   : " + str(liveState))
+            print("LN Date Time    : " + str(dateTime))
+            # print("Sensor Data     : " +  str(sensorDictionary))
             if currentState != liveState and sensorID != "MBC001":
                 currentState = liveState
                 print() 
