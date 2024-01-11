@@ -64,7 +64,7 @@ decoder = json.JSONDecoder(object_pairs_hook=collections.OrderedDict)
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    topic = "utd/lora/app/2/device/+/event/up"
+    topic = "utd/lora/app/4/device/+/event/up"
     client.subscribe(topic)
     print("Subscrbing to Topic: "+ topic)
 
